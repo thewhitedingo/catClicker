@@ -40,6 +40,11 @@ var octopus = {
 	getCurrentCat: function(cat) {
 		return model.setCurrentCat(cat);
 	},
+	incrementCount: function(cat, countID) {
+		cat.count++;
+
+		countID.text(cat.count);
+	}
 };
 // view
 var view = {
@@ -109,9 +114,7 @@ var view = {
 
 		catPic.on('click', (function (countID, cat) {
 			return function() {
-				cat.count++;
-
-				countID.text(cat.count);
+				octopus.incrementCount(cat, countID);
 			}
 		})(countID, cat));
 	},
