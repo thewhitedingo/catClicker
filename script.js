@@ -21,21 +21,65 @@ Cat.prototype.giveCats = function() {
 	return cats;
 } 
 
-var catArray = new Cat(null, null, null, null, null, null);
+Cat.prototype.setCurrentCat = function(cat) {
+	currentCat = cat;
+	return currentCat;
+}
+
+var model = new Cat(null, null, null, null, null, null);
 
 
 // octopus
 var octopus = {
 	init: function() {
-		view.addButtons();
+		view.init();
 	},
 	getCats: function() {
-		return catArray.giveCats();
+		return model.giveCats();
 	},
-
+	getCurrentCat: function(cat) {
+		return model.setCurrentCat(cat);
+	},
 };
 // view
 var view = {
+	currentCat: null,
+	init: function() {
+		var admin = $('#admin');
+		var adminBox = $('.adminBox');
+		var save = $('#save');
+		var cancel = $('#cancel');
+		var adminName = $('#adminName');
+		var adminImage = $('#adminImage');
+		var adminClicks = $('#adminClicks');
+
+		admin.click(function() {
+			adminBox.toggleClass('hide');
+		});
+
+		save.click(function() {
+			var currentCat = view.currentCat;
+			var name = adminName.val();
+			var image = adminImage.val();
+			var clicks = adminClicks.val();
+
+			currentCat.name = name;
+			currentCat.pic = image;
+			currentCat.count = clicks;
+
+			view.showCat(currentCat);
+		})
+
+		cancel.click(function() {
+			adminName.val('');
+			adminImage.val('');
+			adminClicks.val('');
+
+			adminBox.toggleClass('hide');
+		})
+
+		view.addButtons();
+	},
 	addButtons: function() {
 		var getCats = octopus.getCats();
 		for (var i=0; i < getCats.length; i++) {
@@ -46,6 +90,7 @@ var view = {
 			button.on('click', (function(cat){
 				return function() {
 					view.showCat(cat);
+					view.currentCat = octopus.getCurrentCat(cat);
 				}
 			})(getCats[i]));
 		};
@@ -53,13 +98,13 @@ var view = {
 	showCat: function(cat) {
 		$('.currentCat').remove();
 
-		$('body').append('<div id="' + cat.id + '" class="currentCat"><h1 id="' + cat.buttonID + '" class="blue">' + cat.name + '</h1></div>');
+		$('body').append('<div id="' + cat.id + '" class="currentCat"><h1 id="' + cat.buttonID + '" class="blue name">' + cat.name + '</h1></div>');
 		click = $('#' + cat.buttonID);
 		catDiv = $('#' + cat.id);
-		catDiv.append('<div id="' + cat.name + '"><h2>Count: <span id="' + cat.countID + '">' + cat.count + '</span></h2></div>')
+		catDiv.append('<div id="' + cat.name + '"><h2>Count: <span id="' + cat.countID + '" class="count">' + cat.count + '</span></h2></div>')
 		countID = $('#' + cat.countID);
 		imageDiv = $('#' + cat.name);
-		imageDiv.append('<img id="'+ cat.picID + '" src="' + cat.pic + '"></div>');
+		imageDiv.append('<img id="'+ cat.picID + '" class="image" src="' + cat.pic + '"></div>');
 		catPic = $('#' + cat.picID);
 
 		catPic.on('click', (function (countID, cat) {
